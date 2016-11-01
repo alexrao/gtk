@@ -2,6 +2,15 @@
 #include "print.h"
 
 
+/**
+ * @Brief    create_pixbuf
+ *
+ * @Param    filename
+ *
+ * @Returns
+ *
+ * 图片数据读取函数
+ */
 GdkPixbuf *create_pixbuf(const gchar *filename)
 {
     GdkPixbuf *pixbuf;
@@ -17,6 +26,16 @@ GdkPixbuf *create_pixbuf(const gchar *filename)
     return pixbuf;
 }
 
+/**
+ * @Brief    main
+ *
+ * @Param    argc
+ * @Param    argv
+ *
+ * @Returns
+ *
+ * 主函数
+ */
 int main(int argc, char **argv)
 {
     gtk_init(&argc, &argv); // GTK初始化
