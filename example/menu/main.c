@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include "print.h"
 
 int g_count = 0;
@@ -54,8 +55,9 @@ int main(int argc, char **argv)
     GtkWidget *box = NULL;
     GtkWidget *menubar = NULL;
     GtkWidget *filemenu = NULL;
-    GtkWidget *file, *open;
+    GtkWidget *file, *open, *new, *sep;
     GtkWidget *quit = NULL;
+    GtkAccelGroup *accel_group = NULL;
 
     gtk_init(&argc, &argv); // GTK初始化
 
@@ -72,13 +74,24 @@ int main(int argc, char **argv)
     menubar = gtk_menu_bar_new();
     filemenu = gtk_menu_new();
 
-    file = gtk_menu_item_new_with_label("File");
-    open = gtk_menu_item_new_with_label("Open");
-    quit = gtk_menu_item_new_with_label("Quit");
+    accel_group = gtk_accel_group_new();
+    gtk_window_add_accel_group(GTK_WINDOW(window), accel_group);
 
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), filemenu);
 
+    file = gtk_menu_item_new_with_mnemonic("_File"); // File菜单支持快捷键(Alt+F)
+    new = gtk_image_menu_item_new_from_stock(GTK_STOCK_NEW, NULL);
+    open = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, accel_group);
+    sep = gtk_separator_menu_item_new();
+    quit = gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT, accel_group);
+
+    gtk_widget_add_accelerator(quit, "activate", accel_group,
+            GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), filemenu); // 将file拓展子菜单对应filemenu标签
+
+    gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), new); // 将new选项加入到filemenu对应的菜单中
     gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), open);
+    gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep);
     gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), quit);
     gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
     gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 3);
