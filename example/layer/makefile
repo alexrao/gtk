@@ -1,5 +1,5 @@
 #!/bin/sh
-CFLAG := `pkg-config --cflags --libs gtk+-3.0`
+CFLAG := `pkg-config --cflags --libs gtk+-2.0`
 
 CC := gcc
 SOURCE := main.c print.c
