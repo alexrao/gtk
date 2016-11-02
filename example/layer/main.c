@@ -81,6 +81,31 @@ void show_table(GtkWidget *window)
 
 }
 
+void show_align(GtkWidget *window)
+{
+    GtkWidget *ok, *close;
+    GtkWidget *vbox, *hbox, *halign, *valign;
+
+    vbox = gtk_vbox_new(FALSE, 5);
+    valign = gtk_alignment_new(0, 1, 0, 0);
+    gtk_container_add(GTK_CONTAINER(vbox), valign);
+    gtk_container_add(GTK_CONTAINER(window), vbox);
+
+    hbox = gtk_hbox_new(TRUE, 3);
+
+    ok = gtk_button_new_with_label("OK");
+    close = gtk_button_new_with_label("Close");
+    gtk_widget_set_size_request(ok, 170, 30);
+    gtk_container_add(GTK_CONTAINER(hbox), ok);
+    gtk_container_add(GTK_CONTAINER(hbox), close);
+
+    halign = gtk_alignment_new(1, 0, 0, 0);
+    gtk_container_add(GTK_CONTAINER(halign), hbox);
+
+    gtk_box_pack_start(GTK_BOX(vbox), halign, FALSE, FALSE, 0);
+
+}
+
 int main(int argc, char **argv)
 {
     GtkWidget *window = NULL;
@@ -98,7 +123,8 @@ int main(int argc, char **argv)
 
     //show_button(window);
     //show_vbox(window);
-    show_table(window);
+    //show_table(window);
+    show_align(window);
 
     gtk_widget_show_all(window);
 
