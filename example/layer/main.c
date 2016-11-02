@@ -87,8 +87,6 @@ void show_align(GtkWidget *window)
     GtkWidget *vbox, *hbox, *halign, *valign;
 
     vbox = gtk_vbox_new(FALSE, 5);
-    valign = gtk_alignment_new(0, 1, 0, 0);
-    gtk_container_add(GTK_CONTAINER(vbox), valign);
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
     hbox = gtk_hbox_new(TRUE, 3);
@@ -99,7 +97,7 @@ void show_align(GtkWidget *window)
     gtk_container_add(GTK_CONTAINER(hbox), ok);
     gtk_container_add(GTK_CONTAINER(hbox), close);
 
-    halign = gtk_alignment_new(1, 0, 0, 0);
+    halign = gtk_alignment_new(1, 1, 0, 0);
     gtk_container_add(GTK_CONTAINER(halign), hbox);
 
     gtk_box_pack_start(GTK_BOX(vbox), halign, FALSE, FALSE, 0);
