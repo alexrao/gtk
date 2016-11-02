@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include "print.h"
+#include <string.h>
 
 int g_count = 0;
 char g_buf[64] = {0};
@@ -56,6 +57,34 @@ void toggle_statusbar(GtkWidget *widget, gpointer statusbar)
     }
 }
 
+void undo_redo(GtkWidget *widget, gpointer item)
+{
+    static int count = 2;
+    const char *name = gtk_widget_get_name(widget);
+
+    print("name[%s]", name);
+    if(strcmp(name, "tnew") == 0)
+    {
+        count++;
+    }
+    else
+    {
+        count--;
+    }
+
+    print("count:%d", count);
+    if(count < 0)
+    {
+        gtk_widget_set_sensitive(widget, FALSE);
+        gtk_widget_set_sensitive(item, TRUE);
+    }
+    else if(count > 5)
+    {
+        gtk_widget_set_sensitive(widget, FALSE);
+        gtk_widget_set_sensitive(item, TRUE);
+    }
+}
+
 /**
  * @Brief    main
  *
@@ -70,9 +99,11 @@ int main(int argc, char **argv)
 {
     GtkWidget *window = NULL;
     GtkWidget *box = NULL;
+    GtkWidget *toolbar = NULL;
     GtkWidget *menubar = NULL;
     GtkWidget *filemenu = NULL;
     GtkWidget *file, *open, *new, *sep;
+    GtkToolItem *tnew, *topen, *tsave, *texit, *tsep;
     GtkWidget *quit = NULL;
     GtkAccelGroup *accel_group = NULL;
     GtkWidget *statusbar = NULL;
@@ -125,6 +156,50 @@ int main(int argc, char **argv)
     statusbar = gtk_statusbar_new();
     gtk_box_pack_end(GTK_BOX(box), statusbar, FALSE, TRUE, 1);
 
+#if 0
+    toolbar = gtk_toolbar_new();
+    gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
+
+    gtk_container_set_border_width(GTK_CONTAINER(toolbar), 2);
+
+    tnew = gtk_tool_button_new_from_stock(GTK_STOCK_NEW);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tnew, -1);
+
+    topen = gtk_tool_button_new_from_stock(GTK_STOCK_OPEN);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), topen, -1);
+
+    tsave = gtk_tool_button_new_from_stock(GTK_STOCK_SAVE);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tsave, -1);
+
+    tsep = gtk_separator_tool_item_new();
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tsep, -1);
+
+    texit = gtk_tool_button_new_from_stock(GTK_STOCK_QUIT);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), texit, -1);
+
+    gtk_box_pack_start(GTK_BOX(box), toolbar, FALSE, FALSE, 5);
+#else
+    toolbar = gtk_toolbar_new();
+    gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
+
+    gtk_container_set_border_width(GTK_CONTAINER(toolbar), 2);
+
+    tnew = gtk_tool_button_new_from_stock(GTK_STOCK_UNDO);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tnew, -1);
+
+    topen = gtk_tool_button_new_from_stock(GTK_STOCK_REDO);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), topen, -1);
+
+    tsep = gtk_separator_tool_item_new();
+
+    gtk_box_pack_start(GTK_BOX(box), toolbar, FALSE, FALSE, 5);
+
+    g_signal_connect(G_OBJECT(tnew), "clicked",
+            G_CALLBACK(undo_redo), topen);
+
+    g_signal_connect(G_OBJECT(topen), "clicked",
+            G_CALLBACK(undo_redo), tnew);
+#endif
     g_signal_connect(G_OBJECT(open), "activate",
             G_CALLBACK(show_text), NULL); // 退出的回调(注销所有申请)
 
